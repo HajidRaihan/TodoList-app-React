@@ -1,0 +1,93 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="root"></div>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script type="text/babel">
+      const root = document.querySelector(".root");
+
+      function App() {
+        const [activity, setActivity] = React.useState("");
+        const [edit, setEdit] = React.useState({});
+        const [todos, setTodos] = React.useState([]);
+        function generateId() {
+          return Date.now();
+        }
+
+        function saveTodoHandler(event) {
+          event.preventDefault();
+
+          if (edit.id) {
+            const updatedTodo = {
+              id: edit.id,
+              activity,
+            };
+            console.log(updatedTodo);
+
+            return;
+          }
+
+          setTodos([
+            ...todos,
+            {
+              id: generateId(),
+              activity: activity,
+            },
+          ]);
+          setActivity("");
+        }
+        function removeTodohandler(todoId) {
+          const filteredTodos = todos.filter(function (todo) {
+            console.log(todoId, todo.id);
+            return todo.id !== todoId;
+          });
+
+          setTodos(filteredTodos);
+
+          //   console.log(filteredTodos);
+        }
+        function editTodoHandler(todo) {
+          setActivity(todo.activity);
+          setEdit(todo);
+        }
+
+        return (
+          <>
+            <h1>Simple To Do List </h1>
+            <form onSubmit={saveTodoHandler}>
+              <input
+                type="text"
+                placeholder="Nama Aktifitas"
+                value={activity}
+                onChange={function () {
+                  setActivity(event.target.value);
+                }}
+              />
+              <button type="submit">{edit.id ? "Simpan Perubahan" : "Tambah"}</button>
+            </form>
+            <ul>
+              {todos.map(function (todo) {
+                return (
+                  <li key={todo.id}>
+                    {todo.activity}
+                    <button onClick={removeTodohandler.bind(this, todo.id)}>Hapus</button>
+                    <button onClick={editTodoHandler.bind(this, todo)}>Edit</button>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        );
+      }
+      ReactDOM.render(<App />, root);
+    </script>
+  </body>
+</html>
